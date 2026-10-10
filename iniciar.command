@@ -17,10 +17,13 @@ fi
 
 [ -f .env ] || cp .env.example .env
 
-if ! grep -qE '^ANTHROPIC_API_KEY=.' .env; then
-  echo "Cole sua chave da API da Anthropic e aperte Enter:"
+if ! grep -qE '^ANTHROPIC_API_KEY=.' .env && ! grep -qE '^JARVIS_MODO_TESTE=1' .env; then
+  echo "Cole sua chave da API da Anthropic e aperte Enter."
+  echo "Se ainda não tiver chave, digite TESTE e aperte Enter para usar o modo de teste, sem custo."
   read -r APIKEY
-  if [ -n "$APIKEY" ]; then
+  if [ "$APIKEY" = "TESTE" ]; then
+    grep -v '^JARVIS_MODO_TESTE=' .env > .env.tmp && echo 'JARVIS_MODO_TESTE=1' >> .env.tmp && mv .env.tmp .env
+  elif [ -n "$APIKEY" ]; then
     grep -v '^ANTHROPIC_API_KEY=' .env > .env.tmp && printf 'ANTHROPIC_API_KEY=%s\n' "$APIKEY" >> .env.tmp && mv .env.tmp .env
   fi
 fi

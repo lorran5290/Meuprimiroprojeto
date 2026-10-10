@@ -332,7 +332,11 @@ async function loadStatus() {
     const res = await fetch('/api/status');
     const status = await res.json();
     renderGoogle(status.google);
-    if (!status.anthropicConfigured) notify('Falta a ANTHROPIC_API_KEY no servidor. Veja o README.', 'error');
+    if (status.testMode) {
+      notify('Modo de teste: respostas prontas e sem custo. Para perguntas de verdade, configure a chave da Anthropic.', 'info');
+    } else if (!status.anthropicConfigured) {
+      notify('Falta a ANTHROPIC_API_KEY no servidor. Veja o README.', 'error');
+    }
   } catch {
     el.google.textContent = 'Google: indisponível';
     notify('Não consegui falar com o servidor do Jarvis.', 'error');

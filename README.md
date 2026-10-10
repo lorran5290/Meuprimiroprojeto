@@ -38,6 +38,14 @@ npm start
 
 Abra http://localhost:3000 no Chrome ou no Edge e permita o uso do microfone.
 
+**Jeito mais fácil:** dê dois cliques em `iniciar.bat` (Windows) ou `iniciar.command` (Mac). Na primeira vez ele instala o necessário e pede a sua chave da Anthropic. Depois disso, ele abre o navegador sozinho.
+
+### Modo de teste (sem custo)
+
+Sem chave da Anthropic, você ainda pode testar a voz, a palavra "Jarvis" e a janela. No launcher, digite `TESTE` quando ele pedir a chave. Ou escreva `JARVIS_MODO_TESTE=1` no `.env`.
+
+No modo de teste, o Jarvis responde só com respostas prontas: que horas são, que dia é hoje, cumprimentos e ajuda. Agenda, Gmail e Drive não funcionam nele. Para perguntas de verdade, adicione a `ANTHROPIC_API_KEY` no `.env` e reinicie.
+
 ## Conectar o Google
 
 Esta etapa é feita uma vez.

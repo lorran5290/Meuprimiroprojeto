@@ -18,7 +18,7 @@ export function sanitizeHistory(raw) {
   return firstUser === -1 ? [] : clean.slice(firstUser);
 }
 
-export function createApp({ agent, google, anthropicConfigured, timeZone }) {
+export function createApp({ agent, google, anthropicConfigured, testMode = false, timeZone }) {
   const app = express();
   app.disable('x-powered-by');
   // Cabe o histórico inteiro: até 20 mensagens de 4000 caracteres.
@@ -28,6 +28,7 @@ export function createApp({ agent, google, anthropicConfigured, timeZone }) {
   app.get('/api/status', (req, res) => {
     res.json({
       anthropicConfigured,
+      testMode,
       timeZone,
       google: {
         configured: google.isConfigured(),
@@ -46,7 +47,7 @@ export function createApp({ agent, google, anthropicConfigured, timeZone }) {
       res.status(400).json({ error: `Mensagem muito longa (máximo ${MAX_MESSAGE_CHARS} caracteres).` });
       return;
     }
-    if (!anthropicConfigured) {
+    if (!anthropicConfigured && !testMode) {
       res.status(503).json({ error: 'A ANTHROPIC_API_KEY não está configurada no servidor.' });
       return;
     }

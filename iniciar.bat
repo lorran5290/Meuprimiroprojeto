@@ -24,13 +24,21 @@ if not exist .env copy /y .env.example .env >nul
 
 findstr /r /c:"^ANTHROPIC_API_KEY=." .env >nul 2>nul
 if errorlevel 1 (
-  echo.
-  echo Cole sua chave da API da Anthropic e aperte Enter.
-  set /p "APIKEY=Chave: "
-  if not "!APIKEY!"=="" (
-    findstr /v /b /c:"ANTHROPIC_API_KEY=" .env > .env.tmp
-    echo ANTHROPIC_API_KEY=!APIKEY!>> .env.tmp
-    move /y .env.tmp .env >nul
+  findstr /r /c:"^JARVIS_MODO_TESTE=1" .env >nul 2>nul
+  if errorlevel 1 (
+    echo.
+    echo Cole sua chave da API da Anthropic e aperte Enter.
+    echo Se ainda nao tiver chave, digite TESTE e aperte Enter para usar o modo de teste, sem custo.
+    set /p "APIKEY=Chave ou TESTE: "
+    if /i "!APIKEY!"=="TESTE" (
+      findstr /v /b /c:"JARVIS_MODO_TESTE=" .env > .env.tmp
+      echo JARVIS_MODO_TESTE=1>> .env.tmp
+      move /y .env.tmp .env >nul
+    ) else if not "!APIKEY!"=="" (
+      findstr /v /b /c:"ANTHROPIC_API_KEY=" .env > .env.tmp
+      echo ANTHROPIC_API_KEY=!APIKEY!>> .env.tmp
+      move /y .env.tmp .env >nul
+    )
   )
 )
 

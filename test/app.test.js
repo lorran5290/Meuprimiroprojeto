@@ -61,6 +61,7 @@ test('rotas da API: status, validação e resposta do agente', async (t) => {
   const status = await (await fetch(`${base}/api/status`)).json();
   assert.deepEqual(status, {
     anthropicConfigured: true,
+    testMode: false,
     timeZone: 'America/Sao_Paulo',
     google: { configured: true, connected: false },
   });
@@ -84,6 +85,21 @@ test('sem ANTHROPIC_API_KEY o chat responde 503 com aviso claro', async (t) => {
   const res = await fetch(`http://127.0.0.1:${server.address().port}/api/chat`, json({ message: 'oi' }));
   assert.equal(res.status, 503);
   assert.match((await res.json()).error, /ANTHROPIC_API_KEY/);
+});
+
+test('com o modo de teste ligado, o chat funciona mesmo sem chave da API', async (t) => {
+  const agent = fakeAgent(({ message }) => ({ reply: `teste: ${message}`, toolsUsed: [] }));
+  const server = await startServer({ agent, google: fakeGoogle(), anthropicConfigured: false, testMode: true, timeZone: 'America/Sao_Paulo' });
+  t.after(() => server.close());
+  const base = `http://127.0.0.1:${server.address().port}`;
+
+  const status = await (await fetch(`${base}/api/status`)).json();
+  assert.equal(status.testMode, true);
+  assert.equal(status.anthropicConfigured, false);
+
+  const res = await fetch(`${base}/api/chat`, json({ message: 'oi' }));
+  assert.equal(res.status, 200);
+  assert.equal((await res.json()).reply, 'teste: oi');
 });
 
 test('falha do modelo vira 500 sem vazar detalhes internos', async (t) => {

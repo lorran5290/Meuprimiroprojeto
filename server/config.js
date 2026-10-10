@@ -6,6 +6,7 @@ export const config = {
   port,
   anthropicApiKey: process.env.ANTHROPIC_API_KEY || '',
   model: process.env.JARVIS_MODEL || 'claude-sonnet-5-5',
+  testMode: process.env.JARVIS_MODO_TESTE === '1',
   timeZone: process.env.JARVIS_TIMEZONE || 'America/Sao_Paulo',
   dataDir: process.env.JARVIS_DATA_DIR || 'data',
   google: {
