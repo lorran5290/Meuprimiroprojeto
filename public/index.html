@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Jarvis, seu assistente de voz com Google Agenda, Gmail e Drive.">
+  <title>Jarvis</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='7' fill='%2322d3ee'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body data-state="idle">
+  <header class="topbar">
+    <div class="brand">JARVIS</div>
+    <div class="links">
+      <span id="google-status" class="pill">Google: verificando…</span>
+      <button id="google-action" class="pill button" type="button" hidden>Conectar Google</button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <div class="orb" aria-hidden="true"><span></span></div>
+    <p id="state" class="state" aria-live="polite">Pronto</p>
+    <p id="notice" class="notice" hidden></p>
+    <section id="log" class="log" aria-label="Conversa com o Jarvis"></section>
+  </main>
+
+  <footer class="dock">
+    <div class="options">
+      <label class="toggle"><input id="voice" type="checkbox" checked> Voz do Jarvis</label>
+      <label class="toggle"><input id="always-on" type="checkbox"> Escutar sempre (diga "Jarvis")</label>
+    </div>
+    <form id="composer" class="composer" autocomplete="off">
+      <button id="mic" class="mic" type="button" aria-label="Falar com o Jarvis" aria-pressed="false" title="Falar">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="9" y="3" width="6" height="11" rx="3"></rect>
+          <path d="M5 11a7 7 0 0 0 14 0"></path>
+          <path d="M12 18v3"></path>
+        </svg>
+      </button>
+      <input id="input" type="text" placeholder="Fale ou digite…" aria-label="Mensagem para o Jarvis" maxlength="4000">
+      <button id="send" type="submit">Enviar</button>
+    </form>
+  </footer>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
