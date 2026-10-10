@@ -1,0 +1,3 @@
+# cmd.exe só lê corretamente arquivos .bat com fim de linha CRLF.
+*.bat text eol=crlf
+*.command text eol=lf
