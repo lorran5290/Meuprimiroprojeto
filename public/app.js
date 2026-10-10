@@ -186,12 +186,16 @@ function createRecognizer() {
 
   rec.onerror = (event) => {
     if (recognizer !== rec) return;
+    if (event.error === 'no-speech' || event.error === 'aborted') return;
+    // Erros que não se resolvem sozinhos: paramos a escuta para não reiniciar em loop.
+    stopListening();
     if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
       notify('O navegador bloqueou o microfone. Libere a permissão do microfone e tente de novo.', 'error');
-      stopListening();
-      return;
-    }
-    if (event.error !== 'no-speech' && event.error !== 'aborted') {
+    } else if (event.error === 'network') {
+      notify('Sem conexão com o serviço de voz do navegador. Verifique a internet e tente de novo, ou digite a mensagem.', 'error');
+    } else if (event.error === 'audio-capture') {
+      notify('Não encontrei um microfone. Confira se ele está conectado e liberado.', 'error');
+    } else {
       notify(`Erro no reconhecimento de voz: ${event.error}.`, 'error');
     }
   };
