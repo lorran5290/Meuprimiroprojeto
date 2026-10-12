@@ -1,0 +1,39 @@
+# Ambientes virtuais e cache do Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Segredos e configuração pessoal (NUNCA versionar)
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets/
+
+# Dados locais do LS (memória, auditoria, backups, modelos de voz)
+data/
+models/
+backups/
+*.sqlite
+*.sqlite3
+*.db
+
+# Logs e saídas geradas
+logs/
+*.log
+screenshots/
+
+# Sistema operacional e editores
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

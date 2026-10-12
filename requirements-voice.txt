@@ -1,0 +1,5 @@
+# LS — voz (opcional). Sem estas dependências o LS funciona por texto.
+# Modelo de reconhecimento pt-BR: baixe um modelo Vosk (ex.: vosk-model-small-pt-0.3)
+# e aponte LS_VOSK_MODEL_PATH para a pasta descompactada.
+vosk==0.3.45
+sounddevice==0.5.6

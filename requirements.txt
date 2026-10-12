@@ -1,0 +1,23 @@
+# LS — dependências de execução (testadas com Python 3.13 no Linux e alvo Windows 10/11).
+# Versões fixadas para reprodutibilidade. websockets fica em 16.x porque o google-genai exige <17.
+
+# Cérebro (Gemini oficial)
+google-genai==2.29.0
+
+# Servidor local da interface
+fastapi==0.143.0
+uvicorn==0.54.0
+websockets==16.1.1
+
+# Modelos e configuração
+pydantic==2.14.1
+python-dotenv==1.2.4
+
+# Computador, arquivos e captura de tela
+psutil==7.2.2
+pillow==12.3.0
+pypdf==6.20.0
+
+# Janela nativa (WebView2 no Windows) e bandeja do sistema
+pywebview==6.2.1
+pystray==0.19.5

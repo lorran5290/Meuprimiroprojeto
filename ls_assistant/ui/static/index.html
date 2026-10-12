@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' ws://127.0.0.1:* ws://localhost:*">
+  <title>LS — Assistente</title>
+  <link rel="icon" href="data:,">
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body data-state="standby">
+  <div id="boot" class="boot" aria-hidden="true"><div class="boot-ring"></div><span>LS</span></div>
+
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">LS</span><span class="brand-sub">assistente pessoal</span></div>
+    <div class="pills" id="pills" aria-live="polite">
+      <span class="pill" id="pill-ia">IA: verificando</span>
+      <span class="pill" id="pill-mic">Microfone: desligado</span>
+      <span class="pill" id="pill-conn">Conectando</span>
+    </div>
+    <div class="top-actions">
+      <button type="button" class="ghost" id="btn-fullscreen" aria-label="Alternar tela cheia">Tela cheia</button>
+      <button type="button" class="ghost" id="btn-settings">Configurações</button>
+      <button type="button" class="danger" id="btn-emergency" aria-label="Parada de emergência: cancela tudo">Parada de emergência</button>
+    </div>
+  </header>
+
+  <div class="emergency-banner" id="emergency-banner" hidden>
+    <strong>Parada de emergência ativa.</strong> Tarefas canceladas e novas ações bloqueadas.
+    <button type="button" class="ghost" id="btn-release">Liberar</button>
+  </div>
+
+  <main class="layout">
+    <aside class="panel side-left" aria-label="Atividade e aprovações">
+      <section class="card">
+        <h2>Aprovações</h2>
+        <div id="confirmations" class="stack"><p class="muted">Nada aguardando sua decisão.</p></div>
+      </section>
+      <section class="card grow">
+        <h2>Atividade</h2>
+        <ol id="activity" class="activity" aria-live="polite"></ol>
+      </section>
+      <section class="card">
+        <h2>Ferramentas</h2>
+        <details><summary>Ver catálogo</summary><ul id="tools" class="tools"></ul></details>
+      </section>
+    </aside>
+
+    <section class="center" aria-label="Núcleo e conversa">
+      <div class="core-wrap">
+        <canvas id="core" aria-hidden="true"></canvas>
+        <div class="core-label" id="core-label" role="status">EM ESPERA</div>
+        <div class="core-detail" id="core-detail"></div>
+      </div>
+
+      <div class="transcript" id="transcript" role="log" aria-live="polite" aria-label="Conversa"></div>
+
+      <form class="composer" id="composer" autocomplete="off">
+        <button type="button" class="round" id="btn-mic" aria-pressed="false" aria-label="Ligar ou desligar microfone" title="Microfone">
+          <span class="dot"></span>
+        </button>
+        <button type="button" class="ghost" id="btn-talk" title="Falar uma vez (sem palavra de ativação)">Falar</button>
+        <input id="input" type="text" maxlength="4000" placeholder="Diga “LS” ou escreva aqui…" aria-label="Mensagem para o LS">
+        <button type="button" class="ghost" id="btn-stop-speech" title="Interromper a fala">Calar</button>
+        <button type="submit" class="primary" id="btn-send">Enviar</button>
+        <button type="button" class="ghost" id="btn-cancel" title="Cancelar o pedido em andamento" hidden>Cancelar</button>
+      </form>
+    </section>
+
+    <aside class="panel side-right" aria-label="Memória, sistema e histórico">
+      <nav class="tabs" role="tablist">
+        <button type="button" role="tab" class="tab active" data-tab="memory" aria-selected="true">Memória</button>
+        <button type="button" role="tab" class="tab" data-tab="system" aria-selected="false">Sistema</button>
+        <button type="button" role="tab" class="tab" data-tab="history" aria-selected="false">Histórico</button>
+      </nav>
+
+      <section class="tabpanel" id="tab-memory">
+        <div class="row">
+          <input id="mem-search" type="search" placeholder="Buscar na memória" aria-label="Buscar na memória">
+          <select id="mem-category" aria-label="Filtrar por categoria"><option value="">Todas</option></select>
+        </div>
+        <div id="mem-list" class="stack"></div>
+        <details class="card" id="mem-editor-box">
+          <summary id="mem-editor-title">Nova memória</summary>
+          <form id="mem-form" class="stack">
+            <input type="hidden" id="mem-id">
+            <label>Categoria <select id="mem-cat-form"></select></label>
+            <label>Assunto (chave) <input id="mem-key" maxlength="120" placeholder="ex.: ExNet Fiber"></label>
+            <label>Informação <textarea id="mem-content" rows="3" maxlength="4000" required></textarea></label>
+            <label class="inline"><input type="checkbox" id="mem-sensitive"> Sensível (fora do contexto da IA)</label>
+            <div class="row">
+              <button type="submit" class="primary" id="mem-save">Salvar</button>
+              <button type="button" class="ghost" id="mem-reset">Limpar</button>
+              <button type="button" class="danger" id="mem-delete" hidden>Apagar</button>
+            </div>
+          </form>
+        </details>
+        <div class="card" id="conflicts-box" hidden>
+          <h2>Contradições</h2>
+          <div id="conflicts" class="stack"></div>
+        </div>
+        <div class="row wrap">
+          <button type="button" class="ghost" id="btn-backup">Fazer backup</button>
+          <input id="import-path" type="text" placeholder="Caminho do backup .json" aria-label="Caminho do backup para importar">
+          <select id="import-mode" aria-label="Modo de importação"><option value="mesclar">Mesclar</option><option value="substituir">Substituir</option></select>
+          <button type="button" class="ghost" id="btn-import">Importar</button>
+        </div>
+      </section>
+
+      <section class="tabpanel" id="tab-system" hidden>
+        <div id="sys" class="stack"><p class="muted">Carregando…</p></div>
+      </section>
+
+      <section class="tabpanel" id="tab-history" hidden>
+        <div class="row">
+          <h2>Conversas</h2>
+          <button type="button" class="ghost" id="btn-clear-history">Limpar</button>
+        </div>
+        <ol id="history" class="activity"></ol>
+        <div class="row">
+          <h2>Auditoria</h2>
+          <button type="button" class="ghost" id="btn-clear-audit">Limpar</button>
+        </div>
+        <ol id="audit" class="activity"></ol>
+      </section>
+    </aside>
+  </main>
+
+  <dialog id="settings" aria-labelledby="settings-title">
+    <form method="dialog" class="stack" id="settings-form">
+      <h2 id="settings-title">Configurações</h2>
+      <label>Modelo Gemini <input id="set-model" maxlength="80"></label>
+      <label>Intensidade dos efeitos visuais <input id="set-intensity" type="range" min="0" max="1" step="0.05"></label>
+      <label class="inline"><input id="set-tts" type="checkbox"> Responder em voz</label>
+      <label>Voz <select id="set-voice"></select></label>
+      <label>Velocidade da fala <input id="set-rate" type="range" min="-10" max="10" step="1"></label>
+      <label>Volume da fala <input id="set-volume" type="range" min="0" max="100" step="5"></label>
+      <label class="inline"><input id="set-wake" type="checkbox"> Ativar por palavra (“LS”)</label>
+      <label class="inline"><input id="set-history" type="checkbox"> Guardar histórico de conversas</label>
+      <label class="inline"><input id="set-autostart" type="checkbox"> Iniciar com o Windows (minimizado)</label>
+      <p class="muted" id="set-note">Alterações valem na hora. Alguns caminhos e chaves ficam no arquivo .env.</p>
+      <div class="row">
+        <button type="button" class="primary" id="set-save">Salvar</button>
+        <button type="button" class="ghost" id="set-close">Fechar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <div class="stack">
+      <h2 id="confirm-title">Confirmação necessária</h2>
+      <p id="confirm-desc"></p>
+      <p class="muted" id="confirm-meta"></p>
+      <div class="row">
+        <button type="button" class="primary" id="confirm-yes">Aprovar</button>
+        <button type="button" class="danger" id="confirm-no">Recusar</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <script src="/static/core.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>

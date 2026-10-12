@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ls-assistant"
+version = "0.1.0"
+description = "LS — assistente pessoal para Windows inspirado em JARVIS"
+requires-python = ">=3.11"
+readme = "README.md"
+# As dependências ficam em requirements*.txt (instalação passo a passo no README).
+
+[project.scripts]
+ls = "ls_assistant.app:main"
+
+[tool.setuptools.packages.find]
+include = ["ls_assistant*"]
+
+[tool.setuptools.package-data]
+"ls_assistant.ui" = ["static/*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q -m 'not live'"
+markers = [
+    "live: chama a API real do Gemini (exige GEMINI_API_KEY; pulado sem ela)",
+]
