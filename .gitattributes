@@ -1,0 +1,3 @@
+# Lotes do Windows (cmd) precisam de fim de linha CRLF: com LF, goto e labels podem falhar.
+*.bat text eol=crlf
+*.cmd text eol=crlf

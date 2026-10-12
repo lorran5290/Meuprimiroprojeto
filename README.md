@@ -40,31 +40,45 @@ do sistema.
 
 ## 3. Instalação passo a passo (Windows)
 
-Abra o **Prompt de Comando** (cmd) ou o **PowerShell** na pasta do projeto e rode:
+Os comandos abaixo são para o **PowerShell** (o padrão do Windows 11 no Terminal). Se o projeto ainda
+não estiver na sua máquina, primeiro clone o repositório (`git clone https://github.com/lorran5290/Meuprimiroprojeto.git`).
 
-```bat
-REM 1) Baixe o projeto (ou clone com git)
-git clone https://github.com/lorran5290/Meuprimiroprojeto.git
-cd Meuprimiroprojeto
+```powershell
+# 1) Entre na pasta do projeto
+cd C:\Users\SeuUsuario\Meuprimiroprojeto
 
-REM 2) Instale tudo (cria .venv, instala dependências e cria o arquivo .env)
-scripts\instalar_windows.bat
+# 2) Baixe a branch do LS (ela foi criada depois do seu clone, então é preciso buscar)
+git fetch origin ccr-86bee323-knq7uo
+git checkout ccr-86bee323-knq7uo
+#    Se o Git disser que a branch não existe localmente, use:
+#    git checkout -b ccr-86bee323-knq7uo origin/ccr-86bee323-knq7uo
 
-REM   Se quiser também a voz (palavra "LS" e microfone), use:
-REM   scripts\instalar_windows.bat --voz
+# 3) Instale tudo (cria .venv, instala dependências e cria o arquivo .env)
+.\scripts\instalar_windows.bat
+#    Com voz (palavra "LS" e microfone), use:
+#    .\scripts\instalar_windows.bat --voz
 
-REM 3) Configure a chave do Gemini (seção 4) e então inicie:
-scripts\iniciar_ls.bat
+# 4) Abra o .env no Bloco de Notas e cole a chave (seção 4)
+notepad .env
+
+# 5) Inicie o LS
+.\scripts\iniciar_ls.bat
 ```
+
+**Atenção ao terminal:**
+
+- No **PowerShell**, scripts da pasta atual precisam de `.\` antes do caminho (`.\scripts\...`).
+- Não cole linhas com `REM` no PowerShell: `REM` é do `cmd`. No PowerShell, comentários começam com `#`.
+- No **Prompt de Comando (cmd)**, os mesmos comandos ficam sem `.\`: `scripts\instalar_windows.bat`.
 
 O que o instalador faz: cria o ambiente `.venv`, instala as dependências fixadas em `requirements.txt`,
 registra o pacote localmente (`pip install -e .`) e copia `.env.example` para `.env`.
 Ele **não** grava nenhuma chave; isso é você quem faz.
 
-Para rodar os testes automatizados depois:
+Para rodar os testes automatizados depois (PowerShell):
 
-```bat
-scripts\testar.bat
+```powershell
+.\scripts\testar.bat
 ```
 
 ---
@@ -201,6 +215,10 @@ aciona a parada de emergência.
 
 | Sintoma | Causa provável | O que fazer |
 |---|---|---|
+| `pathspec 'ccr-86bee323-knq7uo' did not match any file(s) known to git` | O clone não tem a branch ainda | `git fetch origin ccr-86bee323-knq7uo` e depois `git checkout ccr-86bee323-knq7uo` (seção 3) |
+| `Não foi possível carregar o módulo 'scripts'` ao rodar `scripts\...` | No PowerShell, caminhos da pasta atual precisam de `.\` | Use `.\scripts\instalar_windows.bat` e `.\scripts\iniciar_ls.bat` |
+| `'REM' não é reconhecido` / `'sem' não é reconhecido` | Linhas `REM` foram coladas no PowerShell | Use os comandos da seção 3 (PowerShell). `REM` é só do cmd |
+| `.bat` abre mas para no meio, ou `goto` não funciona | Arquivo `.bat` com quebras de linha Unix | Atualize o clone; o arquivo `.gitattributes` faz o Git entregar CRLF no Windows. Se persistir, rode `git checkout -- scripts` |
 | `instalar_windows.bat` diz que `python` não é reconhecido | Python não está no PATH | Reinstale o Python marcando *Add python.exe to PATH*, ou use `py -3` |
 | Janela não abre; erro de WebView2 | Runtime ausente (comum no Windows 10) | Instale o WebView2 Runtime (seção 2). Enquanto isso: `scripts\iniciar_ls.bat --no-window` e abra a URL que aparece no console |
 | Pill "IA: modo local" | `GEMINI_API_KEY` vazia ou não lida | Confira o `.env` (sem aspas, sem espaços em volta do `=`) e reinicie |
